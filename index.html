@@ -16,6 +16,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
     <script src="https://supereggbert.github.io/aframe-htmlembed-component/dist/build.js"></script>
+    <script src="https://unpkg.com/aframe-text-plane"></script>
     <script src="/socket.io/socket.io.js"></script>
 
     <style>
@@ -161,24 +162,43 @@
 
         let pos = { x: -3, y: 0, z: -3}
         let len = 0
+        let width = 0
         for (let i = 0; i < tokens.length; i++) {
           let token = tokens[i];
           let word = token.text
           let tag = token.tag
 
-          let width = word.length/10
-          pos.x += width / 2
+          pos.x += width
+          width = word.length/4
+          pos.x += width
           let el = document.createElement('a-entity')
-          el.setAttribute('id', `word-${i}-${word}`)
+          el.setAttribute('id', `word-${i}`)
           el.setAttribute('class', 'word')
-          el.setAttribute('geometry', `primitive: plane; width: ${width}; height: 0.1`)
-          el.setAttribute('material', 'opacity: 0.2; transparent: true')
-          el.setAttribute('text', `height: 0.1; width: ${width}; anchor: center; align: center; wrap-count: ${word.length+1}; color: white; value: ${word}`)
+          // el.setAttribute('geometry', `primitive: plane; width: ${width}; height: 0.1`)
+          // el.setAttribute('material', 'opacity: 0.2; transparent: true')
+          // el.setAttribute('text', `height: 0.1; width: ${width}; anchor: center; align: center; wrap-count: ${word.length+1}; color: white; value: ${word}`)
+          el.setAttribute('text-plane', `text: ${word}`)
           el.setAttribute('position', `${pos.x} ${pos.y} ${pos.z}`)
           words.appendChild(el)
 
-          len += word.length
-          pos.x += width / 2
+          console.log(el.object3D)
+          // el.object3D.onBeforeRender(sceneEl.renderer, sceneEl.object3D, cameraEl.object3D)
+          // setTimeout(() => {
+          //   console.log(el.object3D.children)
+          //   if (el.object3D.children.length > 0) {
+          //     let width = el.object3D.children[0].scale.x
+          //     let height = el.object3D.children[0].scale.y
+          //     console.log(width)
+          //     pos.x += width
+          //   }
+          // }, 10)
+
+          // console.log(el.object3D.children)
+          // if (el.object3D.children.length > 0) {
+          //   let width = el.object3D.children[0].scale.x
+          //   let height = el.object3D.children[0].scale.y
+          //   pos.x += width
+          // }
         }
       }
 
