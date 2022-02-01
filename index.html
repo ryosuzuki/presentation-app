@@ -22,11 +22,18 @@
       body {
         background-color: black;
       }
-      .highlight {
-        background-color: red;
+      #result-div {
+        width: 500px;
+        background: #222;
       }
       .word {
         color: white;
+      }
+      .NN, .NNS, .NNP {
+        background-color: gray;
+      }
+      .highlight-1 {
+        background-color: orange;
       }
     </style>
 
@@ -115,11 +122,6 @@
           console.log(`emitting ${text}`)
           socket.emit('message', text)
 
-          let resultDiv = document.querySelector("#result-div");
-          resultDiv.innerHTML = "";
-          let html = getHTML(text);
-          console.log(html)
-          resultDiv.innerHTML = html;
         }
       };
 
@@ -128,26 +130,39 @@
       const socket = io();
       socket.on('message', (data) => {
         let json = JSON.parse(data)
+
+        let resultDiv = document.querySelector("#result-div");
+        resultDiv.innerHTML = "";
+        let html = getHTML(json);
+        resultDiv.innerHTML = html;
+
+
         // let res = JSON.stringify(json, null, 2)
         // $("pre").text(res);
         console.log(json)
       })
 
-      function getHTML(transcript) {
-        let html = "";
-        let words = transcript.split(" ");
-        // let highlightWords = getHighlightWords(words, entities)
-        let i = 0
-        // let highlightWord = highlightWords[i]
-        for (let j = 0; j < words.length; j++) {
-          let word = words[j];
+      function getHTML(json) {
+        let tokens = json.tokens
+        let entities = json.entities
+        let html = ""
+
+        let keywords = {}
+        for (let entity of entities) {
+          keywords[entity.text] = entity.label
+        }
+        for (let j = 0; j < tokens.length; j++) {
+          let token = tokens[j];
+          let word = token.text
+          let tag = token.tag
+
           let className = 'word draggable'
-          // if (highlightWord && j === highlightWord.index) {
-          //   className += ' '
-          //   className += 'highlight'
-          //   i = i + 1
-          //   highlightWord = highlightWords[i]
-          // }
+          if (Object.keys(keywords).includes(word)) {
+            className += ' '
+            className += 'highlight-1'
+          }
+          className += ' '
+          className += tag
           html +=
             `<i class="${className}" \
                 id="word-${j}-${word}"\

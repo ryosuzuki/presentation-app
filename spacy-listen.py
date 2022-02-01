@@ -1,8 +1,24 @@
 import json
 import spacy
 nlp = spacy.load("en_core_web_sm")
+nlp.add_pipe("merge_noun_chunks")
+nlp.add_pipe("merge_entities")
 
 while True:
   text = input()
   doc = nlp(text)
-  print(json.dumps([chunk.text for chunk in doc.noun_chunks]))
+
+  res = { "tokens": [], "entities" : [] }
+  for token in doc:
+    res["tokens"].append({
+      "text": token.text,
+      "tag": token.tag_
+    })
+
+  for ent in doc.ents:
+    res["entities"].append({
+      "text": ent.text,
+      "label": ent.label_
+    })
+
+  print(json.dumps(res))
