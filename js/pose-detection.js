@@ -65,3 +65,20 @@ async function predict(source) {
   }
 }
 
+
+function showHands(predictions) {
+  for (let hand of predictions) {
+    for (let i = 0; i < hand.landmarks.length; i++) {
+      let landmark = hand.landmarks[i]
+      let x = landmark[0]
+      let y = landmark[1]
+      let z = landmark[2]
+
+    }
+  }
+
+
+
+}
+
+
