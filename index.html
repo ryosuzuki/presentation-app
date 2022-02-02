@@ -14,12 +14,13 @@
     <script src="https://unpkg.com/@tensorflow-models/handpose@0.0.7/dist/handpose.js"></script>
     -->
 
+    <script src="/socket.io/socket.io.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
     <script src="https://supereggbert.github.io/aframe-htmlembed-component/dist/build.js"></script>
     <script src="https://unpkg.com/aframe-text-plane"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
-    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/letterizejs/lib/letterize.min.js"></script>
 
     <style>
       body {
@@ -156,12 +157,12 @@
         }
 
         let sceneEl = document.querySelector('a-scene')
-        let prev = document.querySelector('a-entity#words')
-        if (prev) sceneEl.removeChild(prev)
-        let words = document.createElement('a-entity')
-        words.setAttribute('id', 'words')
-        sceneEl.appendChild(words)
-
+        let words = document.querySelector('a-entity#words')
+        if (!words) {
+          words = document.createElement('a-entity')
+          words.setAttribute('id', 'words')
+          sceneEl.appendChild(words)
+        }
         let pos = { x: -3, y: 0, z: -3}
         let len = 0
         let width = 0
@@ -173,15 +174,18 @@
           pos.x += width
           width = word.length/4
           pos.x += width
-          let el = document.createElement('a-entity')
-          el.setAttribute('id', `word-${i}`)
-          el.setAttribute('class', 'word animate__animated animate__bounce')
+          let el = document.querySelector(`a-entity#word-${i}`)
+          if (!el) {
+            el = document.createElement('a-entity')
+            el.setAttribute('id', `word-${i}`)
+            words.appendChild(el)
+          }
           // el.setAttribute('geometry', `primitive: plane; width: ${width}; height: 0.1`)
           // el.setAttribute('material', 'opacity: 0.2; transparent: true')
           // el.setAttribute('text', `height: 0.1; width: ${width}; anchor: center; align: center; wrap-count: ${word.length+1}; color: white; value: ${word}`)
           el.setAttribute('text-plane', `text: ${word}`)
           el.setAttribute('position', `${pos.x} ${pos.y} ${pos.z}`)
-          words.appendChild(el)
+          el.setAttribute('hoge', true)
 
           console.log(el.object3D)
           // el.object3D.onBeforeRender(sceneEl.renderer, sceneEl.object3D, cameraEl.object3D)
@@ -207,77 +211,91 @@
 
       AFRAME.registerComponent('hoge', {
         init: function() {
-          anime({
-            targets: this.el,
-            scale: '1 1 1',
-            translateX: 240,
-            rotation: '1 1 1',
-            loop: true,
-            skew: '2 2 2',
+          animateText({
+            el: this.el,
+            translateX: 2,
+            scale: 2,
+            rotation: 90,
+            opacity: 0.2,
+            color: '#0ee',
+            loop: false,
           })
-        }
-
-
+        },
       })
+
+      function animateText(config) {
+        let defaultConfig = {
+          loop: true,
+          direction: 'alternate',
+          easing: 'easeInOutExpo',
+        }
+        config = Object.assign(defaultConfig, config)
+        let el = config.el
+        let pos = el.getAttribute('position')
+        let scale = el.getAttribute('scale')
+        let rotation = el.getAttribute('rotation')
+        let text = {}
+        text = el.getAttribute('text-plane') // text
+        let params = {
+          posX: pos.x,
+          posY: pos.y,
+          posZ: pos.z,
+          scaleX: scale.x,
+          scaleY: scale.y,
+          scaleZ: scale.z,
+          rotationX: rotation.x,
+          rotationY: rotation.y,
+          rotationZ: rotation.z,
+          // color: text.color,
+          // opacity: text.opacity,
+          // letterSpacing: text.letterSpacing
+        }
+        if (config.translateX) {
+          config.posX = params.posX + config.translateX
+        }
+        if (config.translateY) {
+          config.posY = params.posY + config.translateY
+        }
+        if (config.translateZ) {
+          config.posZ = params.posZ + config.translateZ
+        }
+        if (config.scale) {
+          config.scaleX = config.scale
+          config.scaleY = config.scale
+          config.scaleZ = config.scale
+        }
+        if (config.rotation) {
+          config.rotationZ = config.rotation
+        }
+        config = Object.assign(config, {
+          targets: params,
+          update: () => {
+            el.setAttribute('position', { x: params.posX, y: params.posY, z: params.posZ })
+            el.setAttribute('scale', { x: params.scaleX, y: params.scaleY, z: params.scaleZ })
+            el.setAttribute('rotation', { x: params.rotationX, y: params.rotationY, z: params.rotationZ })
+            // el.setAttribute('text-plane', Object.assign(text, { color: params.color, opacity: params.opacity, letterSpacing: params.letterSpacing }))
+          }
+        })
+        anime(config)
+      }
     </script>
 
   </head>
 
   <body>
-
-<h1 class="word animate__animated animate__bounce animate__infinite">An animated element</h1>
-
-    <a-scene
-      test
-    >
+    <a-scene test>
       <a-camera position="0 0 0" rotation="-45 0 0">
         <a-cursor gaze-event material="color: white;"></a-cursor>
       </a-camera>
       <a-entity htmlembed htmlinit position="0 1 -3">
         <div id="result-div">
-          <i class="word animate__animated animate__bounce">Hello</i><i class="word">World</i>
-          <h1 class="word animate__animated animate__bounce animate__infinite">An animated element</h1>
+          <i class="word">Hello</i><i class="word">World</i>
+          <h1 class="word">An animated element</h1>
         </div>
       </a-entity>
-      <a-entity id="hoge" hoge text-plane="text: fwfowe" position="0 -1 -3" animation="property: components.text.material.uniforms.opacity.value; to: 0; dir: alternate; loop: true" class="word animate__animated animate__bounce animate__infinite"></a-entity>
-      <a-entity id="fuga" hoge text="value: fwfowe; width: 4" position="0 0 -3" animation="property: components.text.material.uniforms.opacity.value; to: 0; dir: alternate; loop: true" class="word animate__animated animate__bounce animate__infinite"></a-entity>
+      <a-entity id="hoge" hoge text-plane="text: hoge" position="0 -1 -3" class="word"></a-entity>
+      <a-entity id="fuga" text="value: fuga; width: 4" position="0 0 -3" class="word"></a-entity>
     </a-scene>
 
-    <script>
-
-      function getHTML(json) {
-        let tokens = json.tokens
-        let entities = json.entities
-        let html = ""
-
-        let keywords = {}
-        for (let entity of entities) {
-          keywords[entity.text] = entity.label
-        }
-        for (let j = 0; j < tokens.length; j++) {
-          let token = tokens[j];
-          let word = token.text
-          let tag = token.tag
-
-          let className = 'word draggable'
-          if (Object.keys(keywords).includes(word)) {
-            className += ' '
-            className += 'highlight-1'
-          }
-          className += ' '
-          className += tag
-          html +=
-            `<i class="${className}" \
-                id="word-${j}-${word}"\
-                draggable="true" \
-                ondragstart="onDragStart(event)" \
-                >` +
-            word +
-            "</i>" +
-            " ";
-        }
-        return html;
-      }
-     </script>
   </body>
 </html>
