@@ -38,31 +38,29 @@
       const socket = io();
 
       let debug = true
+      debug = false
       if (!debug) {
         socket.on('message', (data) => {
           let json = JSON.parse(data)
-          // console.log(json)
-          // showText(json)
+          console.log(json)
+          showText(json)
         })
       } else {
         let text = "Hello my name is Ryo Suzuki. I am an Assistant Professor at the University of Calgary in Department of Computer Science. Today I want to talk about Real-time Augmented Presentation. As you can see when I talk and present something, we can augment presentation with live kinetic typography, embedded icons, embedded visuals, as well as embedded annotation to a physical object. All components are interactive with gestrual interactions. And most importantly it all happens in real-time. This means no video editing or programming. Thus it can signficiatnly reduces the time and efforts but also expands the tremendous potential of augmented presentation in real-time live talk. Augmented presentation has been widely used technique in YouTube or video documentary. They often use expressive embedded visuals to make the presentation more impressive and engagaging. However it requires a lot of time and efforts to produce such a video through video-editing tools. We wonder what if we can create this kind of videos in real-time. In this talk I want to introduce the system overview and how we implement this demo."
-        text.replace('.', ' ')
-        text.replace(',', ' ')
+        text = text.replaceAll('.', '')
+        text = text.replaceAll(',', '')
         socket.emit('message', text)
         socket.on('message', (data) => {
           let json = JSON.parse(data)
           window.json = json
-
           let i = 1
           setInterval(() => {
             let current = Object.assign({}, json)
             current.tokens = current.tokens.slice(0, i)
             showText(current)
             i++
-          }, 1000)
-
+          }, 800)
         })
-
       }
 
 
@@ -84,7 +82,6 @@
         <a-cursor gaze-event material="color: white;"></a-cursor>
       </a-camera>
       <a-entity id="hoge" animate-text text-plane="text: test" position="0 -1 -3" class="word"></a-entity>
-      <a-entity id="fuga" text="value: fuga; width: 4" position="0 0 -3" class="word"></a-entity>
       <a-entity id="hand-0"></a-entity>
       <a-entity id="hand-1"></a-entity>
       <a-entity id="words"></a-entity>
