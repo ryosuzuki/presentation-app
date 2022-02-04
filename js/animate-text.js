@@ -1,20 +1,35 @@
 AFRAME.registerComponent('animate-text', {
+  schema: {
+    token: { default: '{}', parse: JSON.parse }
+  },
+
   play: function() {
-    animateText({
+    let info = this.el.getAttribute('animate-text')
+    let token = info.token
+    let config = {
       el: this.el,
-      translateX: 2,
-      scale: 2,
-      rotation: 90,
-      opacity: 0.2,
-      color: '#0ee',
       loop: false,
-      // direction: 'reverse',
-    })
+      scale: [0.5, 0.5],
+    }
+    let targetTags = ['NN', 'NNP', 'NNS']
+    if (targetTags.includes(token.tag)) {
+      config.scale[1] = 1
+    }
+    if (token.ent_type !== '') {
+      config.scale[1] = 1
+    }
+    if (token.is_stop) {
+      config.scale[1] = 0.1
+    }
+    config.posX = [Math.random(), Math.random()]
+    config.posY = [Math.random(), Math.random()]
+    config.posZ = [-3, -3]
+    console.log(config)
+    animate(config)
   },
 })
 
-
-function animateText(config) {
+function animate(config) {
   let defaultConfig = {
     loop: true,
     direction: 'alternate',
@@ -27,7 +42,7 @@ function animateText(config) {
   let rotation = el.getAttribute('rotation')
   let text = {}
   text = el.getAttribute('text-plane') // text
-  console.log(text)
+  // console.log(text)
   let params = {
     posX: pos.x,
     posY: pos.y,

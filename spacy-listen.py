@@ -12,7 +12,9 @@ while True:
   for token in doc:
     res["tokens"].append({
       "text": token.text,
-      "tag": token.tag_
+      "tag": token.tag_,
+      "is_stop": token.is_stop,
+      "ent_type": token.ent_type_
     })
 
   for ent in doc.ents:

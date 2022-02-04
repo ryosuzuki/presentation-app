@@ -24,7 +24,6 @@ AFRAME.registerComponent('8thwall-camera-pipeline', {
   },
 })
 
-
 AFRAME.registerComponent('webcam-pipeline', {
   init: function() {
     loadModel()
@@ -132,6 +131,7 @@ function showHands(predictions) {
   }
 
 }
+
 
 
 
