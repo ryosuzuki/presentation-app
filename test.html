@@ -8,37 +8,186 @@
     <script src="/socket.io/socket.io.js"></script>
     <style>
       body {
-        margin: 10px;
+        margin: 10px
+      }
+      .highlight {
+        cursor: pointer;
+      }
+      .highlight:hover {
+        font-weight: bold;
+      }
+      .keyword {
+        background: #96D4CC;
+      }
+      /*
+      - NN  Noun, singular or mass
+      - NNS Noun, plural
+      - NNP Proper noun, singular
+      - NNPS  Proper noun, plural
+      */
+      .tag-nns {
+        background: #96D4CC; /* dark green */
+      }
+      .tag-nnp {
+        background: #DBF5AE; /* green */
+      }
+      .tag-nn {
+        background: #BAE6A2; /* light green */
+      }
+      .entity-person {
+        background: #FDD1D2;
+      }
+      .entity-date {
+        background: #FFF4B0;
+      }
+      .entity-org {
+        background: #BAD8FF;
+      }
+      .image {
+        height: 100% !important;
+        object-fit: cover !important;
       }
     </style>
 
     <script>
-      var socket = io();
+      var socket = io()
 
       $(function () {
-        let text = $("textarea").val();
-        socket.emit("message", text);
+        let text = $('textarea').val()
+        socket.emit('message', text)
 
-        $("textarea").on("input", function () {
-          let text = $("textarea").val();
+        $('textarea').on('input', function () {
+          let text = $('textarea').val()
           text = text.replace(/(\r\n|\n|\r)/gm, ' ')
-          socket.emit("message", text);
-        });
-      });
+          socket.emit('message', text)
+        })
+      })
 
-      socket.on("message", function (message) {
+      function showKeyword(keyword) {
+        socket.emit('search', keyword)
+        $('#result-title').text(keyword)
+        $('#result-description').empty()
+        $('#result-images').empty()
+      }
+
+      socket.on('search', function(json) {
+        console.log(json)
+        if (json.noResults) return false
+        let description = json.results[0].description
+        $('#result-description').text(description)
+
+        for (let image of json.images) {
+          let cardEl = document.createElement('div')
+          $(cardEl).addClass('card')
+          let imageEl = document.createElement('img')
+          $(imageEl).attr('src', image.image)
+          $(imageEl).addClass('ui small image')
+          $(cardEl).append(imageEl)
+          $('#result-images').append(cardEl)
+        }
+      })
+
+      socket.on('message', function (message) {
         let json = JSON.parse(message)
         let res = JSON.stringify(json, null, 2)
-        $("pre").text(res);
+        $('pre').text(res)
         console.log(json)
-      });
+        $('#result').empty()
+        let entities = {}
+        for (let entity of json.entities) {
+          entities[entity.text] = entity.label
+        }
+        for (let token of json.tokens) {
+          let wordEl = document.createElement('span')
+          $(wordEl).text(token.text)
+          $(wordEl).addClass('word')
+          $(wordEl).addClass(`tag-${token.tag.toLowerCase()}`)
+          let targetTags = ['NN', 'NNP', 'NNS']
+          let highlight = false
+          if (targetTags.includes(token.tag)) {
+            $(wordEl).addClass('keyword')
+            highlight = true
+          }
+          if (Object.keys(entities).includes(token.text)) {
+            let entity = entities[token.text]
+            $(wordEl).addClass('entity')
+            $(wordEl).addClass(`entity-${entity.toLowerCase()}`)
+            highlight = true
+          }
+          if (highlight) {
+            $(wordEl).addClass('highlight')
+            $(wordEl).click(function() {
+              console.log(token.text)
+              showKeyword(token.text)
+            })
+          }
+
+          $('#result').append(wordEl)
+          let spaceEl = document.createElement('span')
+          $(spaceEl).text(' ')
+          $('#result').append(spaceEl)
+        }
+      })
+
+
+      window.SpeechRecognition =
+        window.SpeechRecognition || webkitSpeechRecognition;
+      recognition = new window.SpeechRecognition();
+      recognition.lang = "en-US";
+      recognition.interimResults = true;
+      recognition.continuous = true;
+
+      recognition.addEventListener('error', function(event) {
+        console.log(event.error + ' and ' + recognition)
+      })
+
+      let finalTranscript = "";
+      recognition.onresult = (event) => {
+        let interimTranscript = "";
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          let transcript = event.results[i][0].transcript;
+          if (event.results[i].isFinal) {
+            finalTranscript += transcript;
+            interimTranscript = "";
+          } else {
+            interimTranscript += transcript;
+          }
+          let text = finalTranscript + interimTranscript;
+          // debugEl.innerText = value
+          // textEl.setAttribute("value", value);
+          text = text.replace(/(\r\n|\n|\r)/gm, ' ')
+          console.log(`emitting ${text}`)
+          socket.emit('message', text)
+        }
+      };
+
+      // recognition.start();
+
+
     </script>
   </head>
   <body>
-    <h1></h1>
-    <div class="ui form">
-      <textarea>Augmented reality (AR) is an enhanced version of the real physical world that is achieved through the use of digital visual elements, sound, or other sensory stimuli delivered via technology. It is a growing trend among companies involved in mobile computing and business applications in particular.</textarea>
+    <div class="ui grid">
+      <div class="sixteeen wide column ui form">
+        <textarea>Hello my name is Ryo Suzuki. I am an Assistant Professor at the University of Calgary in Department of Computer Science. Today I want to talk about Real-time Augmented Presentation. As you can see when I talk and present something, we can augment presentation with live kinetic typography, embedded icons, embedded visuals, as well as embedded annotation to a physical object. All components are interactive with gestrual interactions. And most importantly it all happens in real-time. This means no video editing or programming. Thus it can signficiatnly reduces the time and efforts but also expands the tremendous potential of augmented presentation in real-time live talk. Augmented presentation has been widely used technique in YouTube or video documentary. They often use expressive embedded visuals to make the presentation more impressive and engagaging. However it requires a lot of time and efforts to produce such a video through video-editing tools. We wonder what if we can create this kind of videos in real-time. In this talk I want to introduce the system overview and how we implement this demo.</textarea>
+      </div>
     </div>
-    <pre></pre>
+    <div class="ui grid">
+      <div class="four wide column">
+        <pre></pre>
+      </div>
+      <div class="one wide column"></div>
+      <div class="ten wide column">
+        <div class="ui message">
+          <div class="header">
+          </div>
+          <p id="result"></p>
+        </div>
+        <div class="ui very padded segment">
+          <h1 id="result-title"></h1>
+          <p id="result-description"></p>
+          <div id="result-images" class="ui four cards"></div>
+        </div>
+      </div>
   </body>
 </html>
