@@ -16,9 +16,6 @@
       .highlight:hover {
         font-weight: bold;
       }
-      .keyword {
-        background: #96D4CC;
-      }
       /*
       - NN  Noun, singular or mass
       - NNS Noun, plural
@@ -42,6 +39,9 @@
       }
       .entity-org {
         background: #BAD8FF;
+      }
+      .keyword {
+        background: #96D4CC;
       }
       .image {
         height: 100% !important;
@@ -93,9 +93,12 @@
         $('pre').text(res)
         console.log(json)
         $('#result').empty()
-        let entities = {}
-        for (let entity of json.entities) {
-          entities[entity.text] = entity.label
+
+        let keywords = {}
+        for (let item of json.keywords) {
+          if (item.rank > 0) {
+            keywords[item.text] = item.rank
+          }
         }
         for (let token of json.tokens) {
           let wordEl = document.createElement('span')
@@ -105,13 +108,16 @@
           let targetTags = ['NN', 'NNP', 'NNS']
           let highlight = false
           if (targetTags.includes(token.tag)) {
-            $(wordEl).addClass('keyword')
+            $(wordEl).addClass('target')
             highlight = true
           }
-          if (Object.keys(entities).includes(token.text)) {
-            let entity = entities[token.text]
+          if (token.ent_type !== '') {
             $(wordEl).addClass('entity')
-            $(wordEl).addClass(`entity-${entity.toLowerCase()}`)
+            $(wordEl).addClass(`entity-${token.ent_type.toLowerCase()}`)
+            highlight = true
+          }
+          if (Object.keys(keywords).includes(token.text)) {
+            $(wordEl).addClass('keyword')
             highlight = true
           }
           if (highlight) {
@@ -121,7 +127,6 @@
               showKeyword(token.text)
             })
           }
-
           $('#result').append(wordEl)
           let spaceEl = document.createElement('span')
           $(spaceEl).text(' ')
@@ -161,7 +166,7 @@
         }
       };
 
-      // recognition.start();
+      recognition.start();
 
 
     </script>
@@ -169,7 +174,7 @@
   <body>
     <div class="ui grid">
       <div class="sixteeen wide column ui form">
-        <textarea>Hello my name is Ryo Suzuki. I am an Assistant Professor at the University of Calgary in Department of Computer Science. Today I want to talk about Real-time Augmented Presentation. As you can see when I talk and present something, we can augment presentation with live kinetic typography, embedded icons, embedded visuals, as well as embedded annotation to a physical object. All components are interactive with gestrual interactions. And most importantly it all happens in real-time. This means no video editing or programming. Thus it can signficiatnly reduces the time and efforts but also expands the tremendous potential of augmented presentation in real-time live talk. Augmented presentation has been widely used technique in YouTube or video documentary. They often use expressive embedded visuals to make the presentation more impressive and engagaging. However it requires a lot of time and efforts to produce such a video through video-editing tools. We wonder what if we can create this kind of videos in real-time. In this talk I want to introduce the system overview and how we implement this demo.</textarea>
+        <textarea>Hello my name is Ryo Suzuki. I am an Assistant Professor at the University of Calgary in Department of Computer Science. Today I want to talk about Real-time Augmented Presentation. As you can see when I talk and present something, we can augment presentation with live kinetic typography, embedded icons, embedded visuals, as well as embedded annotation to a physical object. All components are interactive with gestrual interactions. And most importantly it all happens in real-time. This means no video editing or programming. Thus it can signficiatnly reduces the time and efforts but also expands the tremendous potential of augmented presentation in real-time live talk. Augmented presentation has been a widely used technique in YouTube or video documentary. They often use expressive embedded visuals to make the presentation more impressive and engaging. However it requires a lot of time and efforts to produce such a video through video-editing tools. We wonder what if we can create this kind of videos in real-time. In this talk I want to introduce the system overview and how we implement this demo.</textarea>
       </div>
     </div>
     <div class="ui grid">
