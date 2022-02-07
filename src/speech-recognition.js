@@ -23,8 +23,10 @@ recognition.onresult = (event) => {
       interimTranscript += transcript;
     }
     let text = finalTranscript + interimTranscript;
+    // console.log(finalTranscript)
     // debugEl.innerText = value
     // textEl.setAttribute("value", value);
+    text = interimTranscript
     text = text.replace(/(\r\n|\n|\r)/gm, ' ')
     console.log(`emitting ${text}`)
     socket.emit('message', text)

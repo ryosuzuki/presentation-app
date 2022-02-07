@@ -5,16 +5,24 @@ function showText(json) {
   let len = 0
   let width = 0
   let words = document.querySelector('a-entity#words')
+  /*
   for (let i = tokens.length + 1; i < tokens.length + 10; i++) {
     let el = document.querySelector(`a-entity#word-${i}`)
     if (el) {
       words.removeChild(el)
     }
   }
+  */
 
   for (let i = 0; i < tokens.length; i++) {
     let token = tokens[i];
     let word = token.text
+
+    // console.log(token.keyword_rank)
+    if (token.keyword_rank === 0 && token.ent_type === '') {
+      continue
+    }
+
     pos.x += width
     width = word.length/4
     pos.x += width

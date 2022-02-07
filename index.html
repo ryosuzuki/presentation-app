@@ -46,9 +46,9 @@
           showText(json)
         })
       } else {
-        let text = "Hello my name is Ryo Suzuki. I am an Assistant Professor at the University of Calgary in Department of Computer Science. Today I want to talk about Real-time Augmented Presentation. As you can see when I talk and present something, we can augment presentation with live kinetic typography, embedded icons, embedded visuals, as well as embedded annotation to a physical object. All components are interactive with gestrual interactions. And most importantly it all happens in real-time. This means no video editing or programming. Thus it can signficiatnly reduces the time and efforts but also expands the tremendous potential of augmented presentation in real-time live talk. Augmented presentation has been widely used technique in YouTube or video documentary. They often use expressive embedded visuals to make the presentation more impressive and engagaging. However it requires a lot of time and efforts to produce such a video through video-editing tools. We wonder what if we can create this kind of videos in real-time. In this talk I want to introduce the system overview and how we implement this demo."
-        text = text.replaceAll('.', '')
-        text = text.replaceAll(',', '')
+        let text = "Hi, my name is Adnan Karim. I am a graduate student at the University of Calgary in the Department of Computer Science. Today, I want to talk about Real-time Augmented Presentation. As you can see when I talk about something, we can augment presentation using an augmented reality interface. We have several features, such as live kinetic typography, embedded icons, embedded visuals, as well as an embedded annotation to a physical object. All components are interactive with gestural interactions. And most importantly all animations happen in real-time. This means that no video editing or programming is required. Thus it can significantly reduce the time and efforts of making such an augmented presentation, but also expands the tremendous potential for real-time live presentations like classroom lectures. We believe these techniques can make the presentation more expressive and engaging. In this talk, I want to describe how we designed such a system and introduce a new system to describe how we implemented this demo."
+        // text = text.replaceAll('.', '')
+        // text = text.replaceAll(',', '')
         socket.emit('message', text)
         socket.on('message', (data) => {
           let json = JSON.parse(data)
@@ -68,10 +68,10 @@
     </script>
 
 
-    <script src="js/animate-text.js"></script>
-    <script src="js/show-text.js"></script>
-    <script src="js/speech-recognition.js"></script>
-    <script src="js/pose-detection.js"></script>
+    <script src="src/animate-text.js"></script>
+    <script src="src/show-text.js"></script>
+    <script src="src/speech-recognition.js"></script>
+    <script src="src/pose-detection.js"></script>
 
   </head>
 

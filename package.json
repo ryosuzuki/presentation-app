@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "spacy-install": "python3 -m pip install -U pip setuptools wheel && python3 -m pip install -U spacy && python3 -m spacy download en_core_web_sm"
+    "spacy-install": "python3 -m pip install -U pip setuptools wheel && python3 -m pip install -U spacy && python3 -m spacy download en_core_web_sm && python3 -m pip install pytextrank"
   },
   "repository": {
     "type": "git",

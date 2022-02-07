@@ -11,18 +11,24 @@ AFRAME.registerComponent('animate-text', {
       loop: false,
       scale: [0.2, 0.2],
     }
+
+    config.scale[1] = 0.2
+    config.backgroundColor = ['#FEB07C', '#FEB07C']
+
+    /*
     let targetTags = ['NN', 'NNP', 'NNS']
     if (targetTags.includes(token.tag)) {
-      config.scale[1] = 0.5
+      config.scale[1] = 0.2
       config.backgroundColor = ['#FEB07C', '#FEB07C']
     }
     if (token.ent_type !== '') {
-      config.scale[1] = 0.5
+      config.scale[1] = 0.2
       config.backgroundColor = ['#B8D1C0', '#B8D1C0']
     }
     if (token.is_stop) {
       config.scale[1] = 0.2
     }
+    */
     config.posX = [Math.random(), Math.random()]
     config.posY = [Math.random(), Math.random()]
     config.posZ = [-3, -3]
