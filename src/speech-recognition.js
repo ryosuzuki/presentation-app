@@ -31,6 +31,7 @@ recognition.onresult = (event) => {
     console.log(`emitting ${text}`)
     socket.emit('message', text)
   }
-};
+}
 
+console.log('start')
 recognition.start();

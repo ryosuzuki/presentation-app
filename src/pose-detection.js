@@ -13,9 +13,9 @@ AFRAME.registerComponent('8thwall-camera-pipeline', {
           let width = processGpuResult.camerapixelarray.cols
           let height = processGpuResult.camerapixelarray.rows
           let pixels = processGpuResult.camerapixelarray.pixels
-          let imageData = new ImageData(width, height)
-          imageData.data.set(pixels)
-          predict(imageData)
+          // let imageData = new ImageData(width, height)
+          // imageData.data.set(pixels)
+          // predict(imageData)
         } catch (err) {
           console.log(err)
         }
@@ -131,7 +131,3 @@ function showHands(predictions) {
   }
 
 }
-
-
-
-
