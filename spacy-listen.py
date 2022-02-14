@@ -10,11 +10,17 @@ while True:
   text = input()
   doc = nlp(text)
 
+  res = { "tokens": [], "keywords": [] }
+
   keywords = {}
   for phrase in doc._.phrases:
-    keywords[phrase.text] = phrase.rank
+    if (phrase.rank > 0):
+      keywords[phrase.text] = phrase.rank
+      res["keywords"].append({
+        "text": phrase.text,
+        "rank": phrase.rank,
+      })
 
-  res = { "tokens": [] }
   for token in doc:
     rank = keywords.get(token.text, 0)
     res["tokens"].append({
@@ -22,7 +28,7 @@ while True:
       "tag": token.tag_,
       "is_stop": token.is_stop,
       "ent_type": token.ent_type_,
-      "keyword_rank": rank,
+      "keyword_rank": rank
     })
 
   print(json.dumps(res))

@@ -2,21 +2,21 @@ const {PythonShell} = require('python-shell')
 const pyshell = new PythonShell('spacy-listen.py')
 const express = require('express')
 const http = require('http')
-const path = require('path')
 const app = express()
-const server = http.Server(app)
+const socketio = require('socket.io');
+const server = http.createServer(app)
+const cors = require('cors');
+app.use(cors()); // add this line
 
-const socketio = require('socket.io')
-const io = socketio(server)
+const io = socketio(server,{
+  cors: {
+    origin: '*',
+    methods: ['GET', 'POST']
+  }
+});
 
-app.use(express.static(__dirname))
-
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname + '/index.html'))
-})
-
-server.listen(3000, () => {
-  console.log('listening on 3000')
+server.listen(4000, () => {
+  console.log('Spacy server listening on 4000')
 })
 
 io.on('connection', (socket) => {
