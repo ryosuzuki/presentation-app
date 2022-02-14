@@ -21,7 +21,7 @@ class Animate extends Component {
         let config = {
           el: this.el,
           loop: false,
-          scale: 0.2,
+          scale: 1.2,
         }
 
         config.backgroundColor = '#FEB07C'
