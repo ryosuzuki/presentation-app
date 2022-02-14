@@ -7,6 +7,7 @@ import 'aframe-text-plane'
 import Speech from './Speech.js'
 import Video from './Video.js'
 import Hands from './Hands.js'
+import Animate from './Animate.js'
 
 import { io } from 'socket.io-client'
 import { getSpaceUntilMaxLength } from '@testing-library/user-event/dist/utils';
@@ -76,7 +77,7 @@ class Aframe extends Component {
       if (!el) {
         el = document.createElement('a-entity')
         el.setAttribute('id', `word-${i}`)
-        // el.setAttribute('animate-text', 'token', JSON.stringify(token))
+        el.setAttribute('animate-text', 'token', JSON.stringify(token))
         words.appendChild(el)
       }
       el.setAttribute('text-plane', `text: ${word}`)
@@ -93,6 +94,7 @@ class Aframe extends Component {
           <a-entity id="words"></a-entity>
           <a-plane id="background-plane" width="1000" height="1000" material="transparent: true; opacity: 0.1" position="0 0 -3"></a-plane>
           <Hands />
+          <Animate />
         </a-scene>
       </>
     )
