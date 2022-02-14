@@ -31,9 +31,9 @@ class Hands extends Component {
 
   async predict(source) {
     if (!this.model) return
-    let predictions = await this.model.estimateHands(source)
+    let hands = await this.model.estimateHands(source)
 
-    predictions = predictions.map((hand) => {
+    hands = hands.map((hand) => {
       hand.positions = hand.landmarks.map((landmark) => {
         let pos = this.getPosition(landmark)
         return pos
@@ -41,7 +41,7 @@ class Hands extends Component {
       return hand
     })
 
-    this.App.setState({ predictions: predictions })
+    this.App.setState({ hands: hands })
   }
 
   getPosition(landmark) {
@@ -72,7 +72,7 @@ class Hands extends Component {
   render() {
     return (
       <a-entity id="hands" hands-update>
-        { this.App.state.predictions.map((hand, i) => {
+        { this.App.state.hands.map((hand, i) => {
           return (
             <a-entity id={`hand-${i}`} key={ i }>
               { hand.positions.map((position, j) => {

@@ -5,6 +5,8 @@ import anime from 'animejs/lib/anime.es.js'
 class Animate extends Component {
   constructor(props) {
     super(props)
+
+    this.App = window.App
   }
 
   componentDidMount() {
@@ -38,9 +40,10 @@ class Animate extends Component {
           config.scale[1] = 0.2
         }
         */
-        config.posX = Math.random()
-        config.posY = Math.random()
-        config.posZ = -3
+        // config.posX = Math.random()
+        // config.posY = Math.random()
+        // config.posZ = -3
+
         console.log(config)
 
         this.animate([config, {
