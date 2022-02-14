@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 
 import AFRAME from 'aframe'
 // import 'aframe-react'
+import 'aframe-text-plane'
 
 import Speech from './Speech.js'
 import Video from './Video.js'
@@ -19,36 +20,28 @@ class Aframe extends Component {
   }
 
   componentDidMount() {
-    const socket = io()
-    let debug = true
-    debug = false
-
     this.speech = new Speech(socket)
     this.speech.testRun()
 
-    if (!debug) {
-      socket.on('message', (data) => {
-        let json = JSON.parse(data)
-        console.log(json)
+    let debug = true
+
+    socket.on('message', (data) => {
+      let json = JSON.parse(data)
+      console.log(json)
+
+      if (!debug) {
         this.showText(json)
-      })
-    } else {
-      let text = "Hi, my name is Adnan Karim. I am a graduate student at the University of Calgary in the Department of Computer Science. Today, I want to talk about Real-time Augmented Presentation. As you can see when I talk about something, we can augment presentation using an augmented reality interface. We have several features, such as live kinetic typography, embedded icons, embedded visuals, as well as an embedded annotation to a physical object. All components are interactive with gestural interactions. And most importantly all animations happen in real-time. This means that no video editing or programming is required. Thus it can significantly reduce the time and efforts of making such an augmented presentation, but also expands the tremendous potential for real-time live presentations like classroom lectures. We believe these techniques can make the presentation more expressive and engaging. In this talk, I want to describe how we designed such a system and introduce a new system to describe how we implemented this demo."
-      // text = text.replaceAll('.', '')
-      // text = text.replaceAll(',', '')
-      socket.emit('message', text)
-      socket.on('message', (data) => {
-        let json = JSON.parse(data)
-        window.json = json
+      } else {
         let i = 1
         setInterval(() => {
           let current = Object.assign({}, json)
           current.tokens = current.tokens.slice(0, i)
+          // console.log(current)
           this.showText(current)
           i++
         }, 800)
-      })
-    }
+      }
+    })
   }
 
   showText(json) {
@@ -83,7 +76,7 @@ class Aframe extends Component {
       if (!el) {
         el = document.createElement('a-entity')
         el.setAttribute('id', `word-${i}`)
-        el.setAttribute('animate-text', 'token', JSON.stringify(token))
+        // el.setAttribute('animate-text', 'token', JSON.stringify(token))
         words.appendChild(el)
       }
       el.setAttribute('text-plane', `text: ${word}`)

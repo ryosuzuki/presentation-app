@@ -47,7 +47,7 @@ class Speech {
     defaultTranscript = defaultTranscript.replaceAll(',', '')
 
     let speechTest = true
-    // speechTest = false
+    speechTest = false
     if (speechTest) {
       let words = defaultTranscript.split(' ')
       let text = ''
