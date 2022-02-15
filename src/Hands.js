@@ -80,7 +80,7 @@ class Hands extends Component {
                   <a-sphere
                     id={`hand-${i}-${j}`}
                     key={ j }
-                    radius="0.03"
+                    radius="0.1"
                     position={ `${position.x} ${position.y} ${position.z}` }
                   ></a-sphere>
                 )

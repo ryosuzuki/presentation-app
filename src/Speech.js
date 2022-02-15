@@ -36,9 +36,15 @@ class Speech {
         console.log(`emitting ${text}`)
         this.socket.emit('message', text)
       }
-    };
+    }
 
-    this.recognition.start();
+    this.recognition.start()
+
+    this.socket.on('message', (data) => {
+      let json = JSON.parse(data)
+      console.log(json)
+      window.App.setState({ tokens: json.tokens })
+    })
   }
 
   testRun() {
@@ -62,6 +68,18 @@ class Speech {
     } else {
       this.socket.emit('message', defaultTranscript)
     }
+
+    this.socket.on('message', (data) => {
+      let json = JSON.parse(data)
+      let i = 1
+      setInterval(() => {
+        let current = Object.assign({}, json)
+        current.tokens = current.tokens.slice(0, i)
+        window.App.setState({ tokens: current.tokens })
+        i++
+      }, 800)
+    })
+
   }
 
 }
