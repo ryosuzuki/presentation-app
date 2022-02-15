@@ -32,7 +32,7 @@ class App extends Component {
   componentDidMount() {
     this.speech = new Speech(socket)
     let debug = true
-    // debug = false
+    debug = false
     if (!debug) {
       this.speech.run()
     } else {
@@ -52,7 +52,7 @@ class App extends Component {
       position.x = -8
     }
 
-    if (token.text.toLowerCase().includes('augmented')) {
+    if (token.text.toLowerCase().includes('augmented presentation')) {
       let fixed = this.state.fixed
       position.x = this.state.indexPos.x
       position.y = this.state.indexPos.y
