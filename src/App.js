@@ -21,7 +21,9 @@ class App extends Component {
 
     this.state = {
       hands: [],
-      tokens: []
+      tokens: [],
+      indexPos: { x: 0, y: 0, z: 0 },
+      fixed: {}
     }
 
     this.depth = -15
@@ -38,6 +40,37 @@ class App extends Component {
     }
   }
 
+  getPosition(token, i) {
+    let position = { x: 0, y: 0, z: this.depth }
+    position.x = this.state.indexPos.x
+    position.y = this.state.indexPos.y
+    position.y = -(i%5 - 2) * 2.5
+    if (position.x > 0) {
+      position.x = 8
+    }
+    if (position.x < 0) {
+      position.x = -8
+    }
+
+    if (token.text.toLowerCase().includes('augmented')) {
+      let fixed = this.state.fixed
+      position.x = this.state.indexPos.x
+      position.y = this.state.indexPos.y
+      if (position.y > 10) {
+        if (!fixed[i]) {
+          fixed[i] = { x: position.x, y: position.y }
+          this.setState({ fixed: fixed })
+        }
+      }
+      if (fixed[i]) {
+        position.x = fixed[i].x
+        position.y = fixed[i].y
+      }
+    }
+    return `${position.x} ${position.y} ${position.z}`
+  }
+
+
   render() {
     return (
       <>
@@ -47,12 +80,10 @@ class App extends Component {
           <a-entity id="hoge" animate-text text-plane="text: test" position="0 -1 -20" class="word"></a-entity>
           <a-entity id="words">
             { this.state.tokens.map((token, i) => {
-              if (token.keyword_rank === 0 && token.ent_type === '') return <></>
-              let position = { x: Math.random(), y: Math.random(), z: this.depth }
-              if (this.state.hands.length > 0) {
-                let indexPos = this.state.hands[0].positions[8]
-                position = indexPos
+              if (token.text === '') {
+                token.text = '      '
               }
+
               if (token.text.toLowerCase().includes('university of calgary')) {
                 token.image = '/images/ucalgary.png'
               }
@@ -62,13 +93,21 @@ class App extends Component {
               if (token.text.toLowerCase().includes('gestural')) {
                 token.image = '/images/gesture.png'
               }
+
+              let opacity = 1
+              if (token.text.toLowerCase().includes('augmented')) {
+                setTimeout(() => {
+                  opacity = 0
+                }, 1000)
+              }
+
               return (
                 <a-entity
                   id={`word-${i}`}
                   key={ i }
                   animate-text={ `token: ${JSON.stringify(token)}` }
-                  position={ `${position.x} ${position.y} ${position.z}` }
-                  text-plane={ `text: ${token.text}; fontFamily: Ubuntu`}
+                  position={ this.getPosition(token, i) }
+                  text-plane={ `text: ${token.text}; fontFamily: Ubuntu; backgroundColor: #62A6BF; opacity: ${opacity}`}
                 >
                   { token.image &&
                     <a-image

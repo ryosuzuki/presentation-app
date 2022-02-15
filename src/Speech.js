@@ -31,9 +31,9 @@ class Speech {
         let text = finalTranscript + interimTranscript;
         // debugEl.innerText = value
         // textEl.setAttribute("value", value);
-        text = interimTranscript
+        // text = interimTranscript
         text = text.replace(/(\r\n|\n|\r)/gm, ' ')
-        console.log(`emitting ${text}`)
+        // console.log(`emitting ${text}`)
         this.socket.emit('message', text)
       }
     }
@@ -42,7 +42,11 @@ class Speech {
 
     this.socket.on('message', (data) => {
       let json = JSON.parse(data)
-      console.log(json)
+      // console.log(json)
+
+      json.tokens = json.tokens.filter((token) => {
+        return (token.keyword_rank > 0 || token.ent_type !== '')
+      })
       window.App.setState({ tokens: json.tokens })
     })
   }
@@ -75,9 +79,13 @@ class Speech {
       setInterval(() => {
         let current = Object.assign({}, json)
         current.tokens = current.tokens.slice(0, i)
+        current.tokens = current.tokens.filter((token) => {
+          return (token.keyword_rank > 0 || token.ent_type !== '')
+        })
+
         window.App.setState({ tokens: current.tokens })
         i++
-      }, 800)
+      }, 400)
     })
 
   }

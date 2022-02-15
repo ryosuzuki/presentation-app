@@ -22,6 +22,7 @@ class Animate extends Component {
       }
     })
 
+    let i = 0
     AFRAME.registerComponent('animate-text', {
       schema: {
         token: { default: '{}', parse: JSON.parse }
@@ -30,10 +31,22 @@ class Animate extends Component {
       play: function() {
         let info = this.el.getAttribute('animate-text')
         let token = info.token
+
+        let backgrounds = [
+          '#62A6BF',
+          '#E18AAA',
+          '#B1C294'
+        ]
+        let background = backgrounds[0]
+        i++
+        if (i >= backgrounds.length) {
+          i = 0
+        }
+
         let configs = [
-          { scale: 0.8 },
-          { scale: 1.2, backgroundColor: '#FEB07C' },
-          { scale: 1.2, backgroundColor: '#FEB07C', opacity: 0 }
+          { scale: 0.8, backgroundColor: background },
+          { scale: 1.2, backgroundColor: background },
+          { scale: 1.2, backgroundColor: background, opacity: 0 },
         ]
         /*
         let targetTags = ['NN', 'NNP', 'NNS']
@@ -49,12 +62,17 @@ class Animate extends Component {
           config.scale[1] = 0.2
         }
         */
-        configs[0].posX = Math.random()
-        configs[0].posY = Math.random()
+        // configs[0].posX = Math.random()
+        // configs[0].posY = Math.random()
         configs[0].duration = 0
-
         console.log(info)
-        if (token && token.text.toLowerCase().includes('augmented')) {
+        if (token && token.text.toLowerCase().includes('augmented presentation')) {
+          console.log('jfoejofjewo')
+          configs[1].duration = 10000
+          return
+        }
+
+        if (token && token.text.toLowerCase().includes('features')) {
           configs[1].duration = 10000
         }
 
@@ -164,8 +182,10 @@ function animate(el, configs) {
         }))
       }
     })
+
     timeline.add(config)
   }
+  console.log(timeline)
 
   // anime(config)
   // return config

@@ -41,6 +41,10 @@ class Hands extends Component {
       return hand
     })
 
+    if (hands[0]) {
+      let indexPos = hands[0].positions[8]
+      this.App.setState({ indexPos: indexPos })
+    }
     this.App.setState({ hands: hands })
   }
 
